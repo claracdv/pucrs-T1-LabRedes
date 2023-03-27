@@ -56,6 +56,7 @@ int count_arp_reply = 0;
 int count_ipv4 = 0;
 int count_icmp_reply = 0;
 int count_icmp_request = 0;
+int count_ipv6 = 0;
 int count_udp = 0;
 int count_tcp = 0;
 int count_http = 0;
@@ -199,11 +200,15 @@ void countpacket(struct ether_header header)
 			count_arp_reply++;
 		}
 	}
+	else if (htons(header.ether_type) == ETHERTYPE_IPV6)
+	{
+		count_ipv6++;
+	}
 }
 
 void printPortasUdp(int n)
 {
-	printf("\n%d portas Udp mais utilizadas\n", n);
+	printf("\n%d portas UDP mais utilizadas\n", n);
 	int i;
 
 	for (i = 0; i < n; i++)
@@ -215,7 +220,7 @@ void printPortasUdp(int n)
 
 void printPortasTcp(int n)
 {
-	printf("\n%d portas Tcp mais utilizadas\n", n);
+	printf("\n%d portas TCP mais utilizadas\n", n);
 	int i;
 
 	for (i = 0; i < n; i++)
@@ -237,7 +242,8 @@ void printStatistics()
 
 	printf("\nPackets IPV4: %d (%.2f %%)", count_ipv4, ((float)(100 * count_ipv4) / count_packet));
 	printf("\nPackets ICMP Request: %d (%.2f %%)", count_icmp_request, ((float)(100 * count_icmp_request) / count_packet));
-	printf("\nPackets ICMP Reply: %d (%.2f %% )\n", count_icmp_reply, ((float)(100 * count_icmp_reply) / count_packet));
+	printf("\nPackets ICMP Reply: %d (%.2f %% )", count_icmp_reply, ((float)(100 * count_icmp_reply) / count_packet));
+	printf("\nPackets IPV4: %d (%.2f %%)\n", count_ipv6, ((float)(100 * count_ipv6) / count_packet));
 
 	printf("\nPackets UDP: %d (%.2f %%)", count_udp, ((float)(100 * count_udp) / count_packet));
 	printf("\nPackets TCP: %d (%.2f %%)\n", count_tcp, ((float)(100 * count_tcp) / count_packet));
