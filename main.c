@@ -267,9 +267,9 @@ void printStatistics()
 	printf("\nPackets IPV4: %d (%.2f %%)", count_ipv4, ((float)(100 * count_ipv4) / count_packet));
 	printf("\nPackets ICMP Request: %d (%.2f %%)", count_icmp_request, ((float)(100 * count_icmp_request) / count_packet));
 	printf("\nPackets ICMP Reply: %d (%.2f %% )", count_icmp_reply, ((float)(100 * count_icmp_reply) / count_packet));
-	printf("\nPackets IPV6: %d (%.2f %%)\n", count_ipv6, ((float)(100 * count_ipv6) / count_packet));
+	printf("\nPackets IPV6: %d (%.2f %%)", count_ipv6, ((float)(100 * count_ipv6) / count_packet));
 	printf("\nPackets ICMPV6 Request: %d (%.2f %%)", count_icmpv6_request, ((float)(100 * count_icmpv6_request) / count_packet));
-	printf("\nPackets ICMPV6 Reply: %d (%.2f %% )", count_icmpv6_reply, ((float)(100 * count_icmpv6_reply) / count_packet));
+	printf("\nPackets ICMPV6 Reply: %d (%.2f %% )\n", count_icmpv6_reply, ((float)(100 * count_icmpv6_reply) / count_packet));
 
 	printf("\nPackets UDP: %d (%.2f %%)", count_udp, ((float)(100 * count_udp) / count_packet));
 	printf("\nPackets TCP: %d (%.2f %%)\n", count_tcp, ((float)(100 * count_tcp) / count_packet));
