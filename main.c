@@ -57,6 +57,8 @@ int count_ipv4 = 0;
 int count_icmp_reply = 0;
 int count_icmp_request = 0;
 int count_ipv6 = 0;
+int count_icmpv6_reply = 0;
+int count_icmpv6_request = 0;
 int count_udp = 0;
 int count_tcp = 0;
 int count_http = 0;
@@ -203,6 +205,28 @@ void countpacket(struct ether_header header)
 	else if (htons(header.ether_type) == ETHERTYPE_IPV6)
 	{
 		count_ipv6++;
+
+		struct ip ip_address;
+		memcpy(&ip_address, &buff1[offset], sizeof(ip_address));
+
+		offset += sizeof(ip_address);
+		current_size_packet += (ip_address.ip_len);
+
+		if (ip_address.ip_p == IPPROTO_ICMPV6)
+		{
+			struct icmphdr icmpv6_header;
+			memcpy(&icmpv6_header, &buff1[offset], sizeof(icmpv6_header));
+			offset += sizeof(icmpv6_header);
+
+			if (icmpv6_header.type == ICMP_ECHOREPLY)
+			{
+				count_icmpv6_reply++;
+			}
+			else if (icmpv6_header.type == ICMP_ECHO)
+			{
+				count_icmpv6_request++;
+			}
+		}
 	}
 }
 
@@ -244,6 +268,8 @@ void printStatistics()
 	printf("\nPackets ICMP Request: %d (%.2f %%)", count_icmp_request, ((float)(100 * count_icmp_request) / count_packet));
 	printf("\nPackets ICMP Reply: %d (%.2f %% )", count_icmp_reply, ((float)(100 * count_icmp_reply) / count_packet));
 	printf("\nPackets IPV6: %d (%.2f %%)\n", count_ipv6, ((float)(100 * count_ipv6) / count_packet));
+	printf("\nPackets ICMPV6 Request: %d (%.2f %%)", count_icmpv6_request, ((float)(100 * count_icmpv6_request) / count_packet));
+	printf("\nPackets ICMPV6 Reply: %d (%.2f %% )", count_icmpv6_reply, ((float)(100 * count_icmpv6_reply) / count_packet));
 
 	printf("\nPackets UDP: %d (%.2f %%)", count_udp, ((float)(100 * count_udp) / count_packet));
 	printf("\nPackets TCP: %d (%.2f %%)\n", count_tcp, ((float)(100 * count_tcp) / count_packet));
