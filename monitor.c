@@ -346,15 +346,15 @@ int loop()
 		// Resetando offset
 		offset = 0;
 		// Resetando tamanho atual para 14 bytes
-		atual_tam_pacote = sizeof(atual);
+		atual_tam_pacote = sizeof(current);
 
 		recv(sockd, (char *)&buff1, sizeof(buff1), 0x0);
-		memcpy(&atual, &buff1, sizeof(atual));
+		memcpy(&current, &buff1, sizeof(current));
 
-		offset += sizeof(atual);
-		countpacote(atual);
+		offset += sizeof(current);
+		countpacote(current);
 		// guarda o menor e o maior tamanho de pacote
-		if (atual_tam_pacote > sizeof(atual))
+		if (atual_tam_pacote > sizeof(current))
 		{
 			count_pacote++;
 			total_tam_pacote += atual_tam_pacote;
