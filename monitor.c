@@ -1,8 +1,7 @@
 /*-------------------------------------------------------------*/
 /* Exemplo Socket Raw - Captura pacotes recebidos na interface */
 /*-------------------------------------------------------------*/
-#include <poll.h> // n sei
-
+#include <poll.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -10,8 +9,8 @@
 #include <sys/ioctl.h>
 #include <string.h>
 #include <unistd.h>
-#include <libgen.h> // n sei
-#include <netdb.h>	// n sei
+#include <libgen.h>
+#include <netdb.h>
 
 /* Diretorios: net, netinet, linux contem os includes que descrevem */
 /* as estruturas de dados do header dos protocolos                */
@@ -70,7 +69,7 @@ int atual_tam_pacote = 14;
 int min_tam_pacote = 1518;
 int max_tam_pacote = 0;
 
-// metodo para sort das listas
+// metodo para ordenamento das listas
 int cmpfuncPorta(const void *a, const void *b)
 {
 	struct porta_acessada *ia = (struct porta_acessada *)a;
@@ -400,17 +399,6 @@ int main(int argc, char *argv[])
 	ioctl(sockd, SIOCGIFFLAGS, &ifr);
 	ifr.ifr_flags |= IFF_PROMISC;
 	ioctl(sockd, SIOCSIFFLAGS, &ifr);
-
-	/*
-	// recepcao de pacotes
-	while (1)
-	{
-		recv(sockd, (char *)&buff1, sizeof(buff1), 0x0);
-		// impress�o do conteudo - exemplo Endereco Destino e Endereco Origem
-		printf("MAC Destino: %x:%x:%x:%x:%x:%x \n", buff1[0], buff1[1], buff1[2], buff1[3], buff1[4], buff1[5]);
-		printf("MAC Origem:  %x:%x:%x:%x:%x:%x \n\n", buff1[6], buff1[7], buff1[8], buff1[9], buff1[10], buff1[11]);
-	}
-	*/
 
 	return loop();
 }
