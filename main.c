@@ -232,21 +232,21 @@ void printStatistics()
 	printf("\nPackets MAX Packet: %d", max_size_packet);
 	printf("\nPackets AVG Packet: %lu\n", (total_size_packet / count_packet));
 
-	printf("\nPackets ARP Request :  %.2f %% (%d)", ((float)(100 * count_arp_request) / count_packet), count_arp_request);
-	printf("\nPackets ARP Reply: %.2f %% (%d)\n", ((float)(100 * count_arp_reply) / count_packet), count_arp_reply);
+	printf("\nPackets ARP Request : %d (%.2f %%)", count_arp_request, ((float)(100 * count_arp_request) / count_packet));
+	printf("\nPackets ARP Reply: %d (%.2f %%)\n", count_arp_reply, ((float)(100 * count_arp_reply) / count_packet));
 
-	printf("\nPackets IPV4: %.2f %% (%d)", ((float)(100 * count_ipv4) / count_packet), count_ipv4);
-	printf("\nPackets ICMP Request: %.2f %% (%d)", ((float)(100 * count_icmp_request) / count_packet), count_icmp_request);
-	printf("\nPackets ICMP Reply: %.2f %% (%d)\n", ((float)(100 * count_icmp_reply) / count_packet), count_icmp_reply);
+	printf("\nPackets IPV4: %d (%.2f %%)", count_ipv4, ((float)(100 * count_ipv4) / count_packet));
+	printf("\nPackets ICMP Request: %d (%.2f %%)", count_icmp_request, ((float)(100 * count_icmp_request) / count_packet));
+	printf("\nPackets ICMP Reply: %d (%.2f %% )\n", count_icmp_reply, ((float)(100 * count_icmp_reply) / count_packet));
 
-	printf("\nPackets UDP: %d", count_udp);
-	printf("\nPackets TCP: %d", count_tcp);
+	printf("\nPackets UDP: %d (%.2f %%)", count_udp, ((float)(100 * count_udp) / count_packet));
+	printf("\nPackets TCP: %d (%.2f %%)\n", count_tcp, ((float)(100 * count_tcp) / count_packet));
 	printPortasUdp(5);
 	printPortasTcp(5);
 
-	printf("\nPackets HTTP: %d", count_http);
-	printf("\nPackets DNS: %d", count_dns);
-	printf("\nPackets HTTPs: %d", count_https);
+	printf("\nPackets HTTP: %d (%.2f %%)", count_http, ((float)(100 * count_http) / count_packet));
+	printf("\nPackets DNS: %d (%.2f %%)", count_dns, ((float)(100 * count_dns) / count_packet));
+	printf("\nPackets HTTPs: %d (%.2f %%)", count_https, ((float)(100 * count_https) / count_packet));
 }
 
 void clearScreen()
