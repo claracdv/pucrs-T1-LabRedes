@@ -29,25 +29,17 @@
 
 #define BUFFSIZE 1518
 
-// Atencao!! Confira no /usr/include do seu sisop o nome correto
-// das estruturas de dados dos protocolos.
 struct porta_acessada
 {
 	uint16_t porta;
 	int contador;
 };
 
-struct ip_acessado
-{
-	struct in_addr ip;
-	int contador;
-};
+struct porta_acessada mais_acessados_portas_udp[BUFFSIZE];
+struct porta_acessada mais_acessados_portas_tcp[BUFFSIZE];
 
-struct ip_acessado mais_acessados_ip[BUFFSIZE];
-struct porta_acessada mais_acessados_portas[BUFFSIZE];
-
-int pos_ip_mais_acessados = 0;
-int pos_portas_mais_acessados = 0;
+int pos_portas_mais_acessados_udp = 0;
+int pos_portas_mais_acessados_tcp = 0;
 
 unsigned char buff1[BUFFSIZE]; // buffer de recepcao
 
@@ -59,34 +51,23 @@ struct ether_header header;
 
 int offset = 0;
 int count_packet = 0;
-int count_ipv4 = 0;
 int count_arp_request = 0;
 int count_arp_reply = 0;
+int count_ipv4 = 0;
 int count_icmp_reply = 0;
 int count_icmp_request = 0;
-int count_tcp = 0;
 int count_udp = 0;
+int count_tcp = 0;
 int count_http = 0;
-int count_https = 0;
 int count_dns = 0;
+int count_https = 0;
 
 unsigned long total_size_packet = 0;
 int current_size_packet = 14;
 int min_size_packet = 1518;
 int max_size_packet = 0;
 
-// Implementar melhor, fazer pra os três vetores :D
-//   struct ip_acessado        mais_acessados_ip[BUFFSIZE] ;
-//   struct porta_acessada     mais_acessados_portas[BUFFSIZE] ;
-
-int cmpfuncIp(const void *a, const void *b)
-{
-	struct ip_acessado *ia = (struct ip_acessado *)a;
-	struct ip_acessado *ib = (struct ip_acessado *)b;
-
-	return (ib->contador - ia->contador);
-}
-
+// metodo para sort das listas
 int cmpfuncPorta(const void *a, const void *b)
 {
 	struct porta_acessada *ia = (struct porta_acessada *)a;
@@ -95,16 +76,15 @@ int cmpfuncPorta(const void *a, const void *b)
 	return (ib->contador - ia->contador);
 }
 
-// portas mais acessadas - separar 5 UDP 5 TCP
-void addPorta(uint16_t porta)
+void addPortaUdp(uint16_t porta)
 {
 	// procura a porta
 	int i;
 	for (i = 0; i < BUFFSIZE; i++)
 	{
-		if (mais_acessados_portas[i].porta == porta)
+		if (mais_acessados_portas_udp[i].porta == porta)
 		{
-			mais_acessados_portas[i].contador++;
+			mais_acessados_portas_udp[i].contador++;
 			return;
 		}
 	}
@@ -112,7 +92,26 @@ void addPorta(uint16_t porta)
 	struct porta_acessada porta_temp;
 	porta_temp.porta = porta;
 	porta_temp.contador = 1;
-	mais_acessados_portas[pos_portas_mais_acessados++] = porta_temp;
+	mais_acessados_portas_udp[pos_portas_mais_acessados_udp++] = porta_temp;
+}
+
+void addPortaTcp(uint16_t porta)
+{
+	// procura a porta
+	int i;
+	for (i = 0; i < BUFFSIZE; i++)
+	{
+		if (mais_acessados_portas_tcp[i].porta == porta)
+		{
+			mais_acessados_portas_tcp[i].contador++;
+			return;
+		}
+	}
+
+	struct porta_acessada porta_temp;
+	porta_temp.porta = porta;
+	porta_temp.contador = 1;
+	mais_acessados_portas_tcp[pos_portas_mais_acessados_tcp++] = porta_temp;
 }
 
 void countpacket(struct ether_header header)
@@ -130,7 +129,6 @@ void countpacket(struct ether_header header)
 
 		if (ip_address.ip_p == IPPROTO_ICMP)
 		{
-
 			struct icmphdr icmp_header;
 			memcpy(&icmp_header, &buff1[offset], sizeof(icmp_header));
 			offset += sizeof(icmp_header);
@@ -151,18 +149,14 @@ void countpacket(struct ether_header header)
 			memcpy(&udp_header, &buff1[offset], sizeof(udp_header));
 			offset += sizeof(udp_header);
 
-			printf("\nUDP: \n");
-			printf("%x", htons(udp_header.uh_dport));
-
-			addPorta(udp_header.uh_sport);
-			addPorta(udp_header.uh_dport);
+			addPortaUdp(udp_header.uh_sport);
+			addPortaUdp(udp_header.uh_dport);
 			// printf("adding %x %x",udp_header.uh_sport,udp_header.uh_dport);
 			if (htons(udp_header.uh_dport) == 0x35 || htons(udp_header.uh_sport) == 0x35)
 			{
 				count_dns++;
 			}
 		}
-
 		else if (ip_address.ip_p == IPPROTO_TCP)
 		{
 			count_tcp++;
@@ -171,11 +165,9 @@ void countpacket(struct ether_header header)
 			memcpy(&tcp_header, &buff1[offset], sizeof(tcp_header));
 			offset += sizeof(tcp_header);
 
-			addPorta(tcp_header.th_sport);
-			addPorta(tcp_header.th_dport);
+			addPortaTcp(tcp_header.th_sport);
+			addPortaTcp(tcp_header.th_dport);
 
-			printf("\nTCP: \n");
-			printf("%x", htons(tcp_header.th_dport));
 			if (htons(tcp_header.th_dport) == 0x50 || htons(tcp_header.th_sport) == 0x50)
 			{
 				count_http++;
@@ -209,15 +201,27 @@ void countpacket(struct ether_header header)
 	}
 }
 
-void printPortas(int n)
+void printPortasUdp(int n)
 {
-	printf("\n%d portas mais utilizadas\n", n);
+	printf("\n%d portas Udp mais utilizadas\n", n);
 	int i;
 
 	for (i = 0; i < n; i++)
 	{
-		printf("Porta : %x\t\t", htons(mais_acessados_portas[i].porta));
-		printf("Quantidade : %d\n", mais_acessados_portas[i].contador);
+		printf("Porta : %x\t\t", htons(mais_acessados_portas_udp[i].porta));
+		printf("Quantidade : %d\n", mais_acessados_portas_udp[i].contador);
+	}
+}
+
+void printPortasTcp(int n)
+{
+	printf("\n%d portas Tcp mais utilizadas\n", n);
+	int i;
+
+	for (i = 0; i < n; i++)
+	{
+		printf("Porta : %x\t\t", htons(mais_acessados_portas_tcp[i].porta));
+		printf("Quantidade : %d\n", mais_acessados_portas_tcp[i].contador);
 	}
 }
 
@@ -237,16 +241,8 @@ void printStatistics()
 
 	printf("\nPackets UDP: %d", count_udp);
 	printf("\nPackets TCP: %d", count_tcp);
-	printf("\nPortas utilizadas: %d", pos_portas_mais_acessados);
-	// 5 UDP 5 TCP
-	// if (pos_portas_mais_acessados < 10)
-	// {
-	// 	printPortas(pos_ip_mais_acessados);
-	// }
-	// else
-	// {
-	printPortas(10);
-	//}
+	printPortasUdp(5);
+	printPortasTcp(5);
 
 	printf("\nPackets HTTP: %d", count_http);
 	printf("\nPackets DNS: %d", count_dns);
@@ -258,7 +254,7 @@ void clearScreen()
 	// \e[1;1H - move o cursor para linha 1 coluna 1
 	// \e[2J - move todo texto que esta no terminal para o scrollback buffer
 	const char *CLEAR_SCREE_ANSI = "\e[1;1H\e[2J";
-	write(STDOUT_FILENO, CLEAR_SCREE_ANSI, 12);
+	write(STDOUT_FILENO, CLEAR_SCREE_ANSI, 11);
 }
 
 int loop()
@@ -302,10 +298,11 @@ int loop()
 		}
 
 		// sort das listas
-		//qsort(mais_acessados_ip, pos_ip_mais_acessados, sizeof(struct ip_acessado), cmpfuncIp);
-		qsort(mais_acessados_portas, pos_portas_mais_acessados, sizeof(struct porta_acessada), cmpfuncPorta);
+		qsort(mais_acessados_portas_udp, pos_portas_mais_acessados_udp, sizeof(struct porta_acessada), cmpfuncPorta);
+		qsort(mais_acessados_portas_tcp, pos_portas_mais_acessados_tcp, sizeof(struct porta_acessada), cmpfuncPorta);
 
 		printStatistics();
+
 		// \033[2J - limpa a tela toda
 		// \033[1;1H - posiciona o cursos na linha 1 coluna 1
 		printf("\033[2J\033[1;1H");
