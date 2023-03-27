@@ -47,10 +47,10 @@ int sockd;
 int on;
 struct ifreq ifr;
 
-struct ether_header header;
+struct ethernet_header header;
 
 int offset = 0;
-int count_packet = 0;
+int count_pacote = 0;
 int count_arp_request = 0;
 int count_arp_reply = 0;
 int count_ipv4 = 0;
@@ -65,10 +65,10 @@ int count_http = 0;
 int count_dns = 0;
 int count_https = 0;
 
-unsigned long total_size_packet = 0;
-int current_size_packet = 14;
-int min_size_packet = 1518;
-int max_size_packet = 0;
+unsigned long total_tam_pacote = 0;
+int atual_tam_pacote = 14;
+int min_tam_pacote = 1518;
+int max_tam_pacote = 0;
 
 // metodo para sort das listas
 int cmpfuncPorta(const void *a, const void *b)
@@ -117,7 +117,7 @@ void addPortaTcp(uint16_t porta)
 	mais_acessados_portas_tcp[pos_portas_mais_acessados_tcp++] = porta_temp;
 }
 
-void countpacket(struct ether_header header)
+void countpacote(struct ethernet_header header)
 {
 
 	if (htons(header.ether_type) == ETHERTYPE_IP)
@@ -128,7 +128,7 @@ void countpacket(struct ether_header header)
 		memcpy(&ip_address, &buff1[offset], sizeof(ip_address));
 
 		offset += sizeof(ip_address);
-		current_size_packet += (ip_address.ip_len);
+		atual_tam_pacote += (ip_address.ip_len);
 
 		if (ip_address.ip_p == IPPROTO_ICMP)
 		{
@@ -191,7 +191,7 @@ void countpacket(struct ether_header header)
 		memcpy(&etherArp, &buff1[offset], sizeof(etherArp));
 		offset += sizeof(etherArp);
 
-		current_size_packet += sizeof(etherArp);
+		atual_tam_pacote += sizeof(etherArp);
 
 		if (htons(etherArp.ea_hdr.ar_op) == ARPOP_REQUEST)
 		{
@@ -210,7 +210,7 @@ void countpacket(struct ether_header header)
 		memcpy(&ip_address, &buff1[offset], sizeof(ip_address));
 
 		offset += sizeof(ip_address);
-		current_size_packet += (ip_address.ip_len);
+		atual_tam_pacote += (ip_address.ip_len);
 
 		if (ip_address.ip_p == IPPROTO_ICMPV6)
 		{
@@ -293,34 +293,34 @@ void printPortasTcp(int n)
 	}
 }
 
-void printStatistics()
+void printEstatisticas()
 {
-	printf("\nPackets Total: %d\n", count_packet);
-	printf("\nPackets MIN Packet: %d", min_size_packet);
-	printf("\nPackets MAX Packet: %d", max_size_packet);
-	printf("\nPackets AVG Packet: %lu\n", (total_size_packet / count_packet));
+	printf("\nPacotes Total: %d\n", count_pacote);
+	printf("\nPacotes MIN Pacote: %d", min_tam_pacote);
+	printf("\nPacotes MAX Pacote: %d", max_tam_pacote);
+	printf("\nPacotes AVG Pacote: %lu\n", (total_tam_pacote / count_pacote));
 
-	printf("\nPackets ARP Request : %d (%.2f %%)", count_arp_request, ((float)(100 * count_arp_request) / count_packet));
-	printf("\nPackets ARP Reply: %d (%.2f %%)\n", count_arp_reply, ((float)(100 * count_arp_reply) / count_packet));
+	printf("\nPacotes ARP Request : %d (%.2f %%)", count_arp_request, ((float)(100 * count_arp_request) / count_pacote));
+	printf("\nPacotes ARP Reply: %d (%.2f %%)\n", count_arp_reply, ((float)(100 * count_arp_reply) / count_pacote));
 
-	printf("\nPackets IPV4: %d (%.2f %%)", count_ipv4, ((float)(100 * count_ipv4) / count_packet));
-	printf("\nPackets ICMP Request: %d (%.2f %%)", count_icmp_request, ((float)(100 * count_icmp_request) / count_packet));
-	printf("\nPackets ICMP Reply: %d (%.2f %% )", count_icmp_reply, ((float)(100 * count_icmp_reply) / count_packet));
-	printf("\nPackets IPV6: %d (%.2f %%)", count_ipv6, ((float)(100 * count_ipv6) / count_packet));
-	printf("\nPackets ICMPV6 Request: %d (%.2f %%)", count_icmpv6_request, ((float)(100 * count_icmpv6_request) / count_packet));
-	printf("\nPackets ICMPV6 Reply: %d (%.2f %% )\n", count_icmpv6_reply, ((float)(100 * count_icmpv6_reply) / count_packet));
+	printf("\nPacotes IPV4: %d (%.2f %%)", count_ipv4, ((float)(100 * count_ipv4) / count_pacote));
+	printf("\nPacotes ICMP Request: %d (%.2f %%)", count_icmp_request, ((float)(100 * count_icmp_request) / count_pacote));
+	printf("\nPacotes ICMP Reply: %d (%.2f %% )", count_icmp_reply, ((float)(100 * count_icmp_reply) / count_pacote));
+	printf("\nPacotes IPV6: %d (%.2f %%)", count_ipv6, ((float)(100 * count_ipv6) / count_pacote));
+	printf("\nPacotes ICMPV6 Request: %d (%.2f %%)", count_icmpv6_request, ((float)(100 * count_icmpv6_request) / count_pacote));
+	printf("\nPacotes ICMPV6 Reply: %d (%.2f %% )\n", count_icmpv6_reply, ((float)(100 * count_icmpv6_reply) / count_pacote));
 
-	printf("\nPackets UDP: %d (%.2f %%)", count_udp, ((float)(100 * count_udp) / count_packet));
-	printf("\nPackets TCP: %d (%.2f %%)\n", count_tcp, ((float)(100 * count_tcp) / count_packet));
+	printf("\nPacotes UDP: %d (%.2f %%)", count_udp, ((float)(100 * count_udp) / count_pacote));
+	printf("\nPacotes TCP: %d (%.2f %%)\n", count_tcp, ((float)(100 * count_tcp) / count_pacote));
 	printPortasUdp(5);
 	printPortasTcp(5);
 
-	printf("\nPackets HTTP: %d (%.2f %%)", count_http, ((float)(100 * count_http) / count_packet));
-	printf("\nPackets DNS: %d (%.2f %%)", count_dns, ((float)(100 * count_dns) / count_packet));
-	printf("\nPackets HTTPs: %d (%.2f %%)", count_https, ((float)(100 * count_https) / count_packet));
+	printf("\nPacotes HTTP: %d (%.2f %%)", count_http, ((float)(100 * count_http) / count_pacote));
+	printf("\nPacotes DNS: %d (%.2f %%)", count_dns, ((float)(100 * count_dns) / count_pacote));
+	printf("\nPacotes HTTPs: %d (%.2f %%)", count_https, ((float)(100 * count_https) / count_pacote));
 }
 
-void clearScreen()
+void limpaTela()
 {
 	// \e[1;1H - move o cursor para linha 1 coluna 1
 	// \e[2J - move todo texto que esta no terminal para o scrollback buffer
@@ -340,31 +340,31 @@ int loop()
 	while ((s = poll(&pfd, 1, 0)) == 0)
 	{
 
-		struct ether_header current;
-		// Cleaning buffer...
+		struct ethernet_header atual;
+		// Limpando buffer...
 		memset(&buff1[0], 0, sizeof(buff1));
-		// Reseting offset
+		// Resetando offset
 		offset = 0;
-		// Reseting current size to 14 bytes
-		current_size_packet = sizeof(current);
+		// Resetando tamanho atual para 14 bytes
+		atual_tam_pacote = sizeof(atual);
 
 		recv(sockd, (char *)&buff1, sizeof(buff1), 0x0);
-		memcpy(&current, &buff1, sizeof(current));
+		memcpy(&atual, &buff1, sizeof(atual));
 
-		offset += sizeof(current);
-		countpacket(current);
+		offset += sizeof(atual);
+		countpacote(atual);
 		// guarda o menor e o maior tamanho de pacote
-		if (current_size_packet > sizeof(current))
+		if (atual_tam_pacote > sizeof(atual))
 		{
-			count_packet++;
-			total_size_packet += current_size_packet;
-			if (current_size_packet < min_size_packet)
+			count_pacote++;
+			total_tam_pacote += atual_tam_pacote;
+			if (atual_tam_pacote < min_tam_pacote)
 			{
-				min_size_packet = current_size_packet;
+				min_tam_pacote = atual_tam_pacote;
 			}
-			if (current_size_packet > max_size_packet)
+			if (atual_tam_pacote > max_tam_pacote)
 			{
-				max_size_packet = current_size_packet;
+				max_tam_pacote = atual_tam_pacote;
 			}
 		}
 
@@ -372,7 +372,7 @@ int loop()
 		qsort(mais_acessados_portas_udp, pos_portas_mais_acessados_udp, sizeof(struct porta_acessada), cmpfuncPorta);
 		qsort(mais_acessados_portas_tcp, pos_portas_mais_acessados_tcp, sizeof(struct porta_acessada), cmpfuncPorta);
 
-		printStatistics();
+		printEstatisticas();
 
 		// \033[2J - limpa a tela toda
 		// \033[1;1H - posiciona o cursos na linha 1 coluna 1
