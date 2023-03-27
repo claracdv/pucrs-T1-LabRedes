@@ -152,7 +152,7 @@ void countpacket(struct ether_header header)
 			offset += sizeof(udp_header);
 
 			printf('\nUDP: \n');
-			printf(htons(udp_header.uh_dport));
+			printf("%x", htons(udp_header.uh_dport));
 
 			addPorta(udp_header.uh_sport);
 			addPorta(udp_header.uh_dport);
@@ -175,7 +175,7 @@ void countpacket(struct ether_header header)
 			addPorta(tcp_header.th_dport);
 
 			printf('\nTCP: \n');
-			printf(htons(tcp_header.th_dport));
+			printf("%x", htons(tcp_header.th_dport));
 			if (htons(tcp_header.th_dport) == 0x50 || htons(tcp_header.th_sport) == 0x50)
 			{
 				count_http++;
