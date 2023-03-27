@@ -341,7 +341,7 @@ int loop()
 	{
 
 		struct ethernet_header atual;
-		// Limpando buffer...
+		// Limpando buffer
 		memset(&buff1[0], 0, sizeof(buff1));
 		// Resetando offset
 		offset = 0;
