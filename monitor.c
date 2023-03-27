@@ -47,7 +47,7 @@ int sockd;
 int on;
 struct ifreq ifr;
 
-struct ethernet_header header;
+struct ether_header header;
 
 int offset = 0;
 int count_pacote = 0;
@@ -117,7 +117,7 @@ void addPortaTcp(uint16_t porta)
 	mais_acessados_portas_tcp[pos_portas_mais_acessados_tcp++] = porta_temp;
 }
 
-void countpacote(struct ethernet_header header)
+void countpacote(struct ether_header header)
 {
 
 	if (htons(header.ether_type) == ETHERTYPE_IP)
@@ -340,21 +340,21 @@ int loop()
 	while ((s = poll(&pfd, 1, 0)) == 0)
 	{
 
-		struct ethernet_header atual;
+		struct ether_header current;
 		// Limpando buffer
 		memset(&buff1[0], 0, sizeof(buff1));
 		// Resetando offset
 		offset = 0;
 		// Resetando tamanho atual para 14 bytes
-		atual_tam_pacote = sizeof(atual);
+		atual_tam_pacote = sizeof(current);
 
 		recv(sockd, (char *)&buff1, sizeof(buff1), 0x0);
-		memcpy(&atual, &buff1, sizeof(atual));
+		memcpy(&current, &buff1, sizeof(current));
 
-		offset += sizeof(atual);
-		countpacote(atual);
+		offset += sizeof(current);
+		countpacote(current);
 		// guarda o menor e o maior tamanho de pacote
-		if (atual_tam_pacote > sizeof(atual))
+		if (atual_tam_pacote > sizeof(current))
 		{
 			count_pacote++;
 			total_tam_pacote += atual_tam_pacote;
