@@ -151,7 +151,7 @@ void countpacket(struct ether_header header)
 			memcpy(&udp_header, &buff1[offset], sizeof(udp_header));
 			offset += sizeof(udp_header);
 
-			printf('\nUDP: \n');
+			printf("\nUDP: \n");
 			printf("%x", htons(udp_header.uh_dport));
 
 			addPorta(udp_header.uh_sport);
@@ -174,7 +174,7 @@ void countpacket(struct ether_header header)
 			addPorta(tcp_header.th_sport);
 			addPorta(tcp_header.th_dport);
 
-			printf('\nTCP: \n');
+			printf("\nTCP: \n");
 			printf("%x", htons(tcp_header.th_dport));
 			if (htons(tcp_header.th_dport) == 0x50 || htons(tcp_header.th_sport) == 0x50)
 			{
