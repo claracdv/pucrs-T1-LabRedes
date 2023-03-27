@@ -227,6 +227,45 @@ void countpacket(struct ether_header header)
 				count_icmpv6_request++;
 			}
 		}
+		else if (ip_address.ip_p == IPPROTO_UDP)
+		{
+			count_udp++;
+			struct udphdr udp_header;
+			memcpy(&udp_header, &buff1[offset], sizeof(udp_header));
+			offset += sizeof(udp_header);
+
+			addPortaUdp(udp_header.uh_sport);
+			addPortaUdp(udp_header.uh_dport);
+			// printf("adding %x %x",udp_header.uh_sport,udp_header.uh_dport);
+			if (htons(udp_header.uh_dport) == 0x35 || htons(udp_header.uh_sport) == 0x35)
+			{
+				count_dns++;
+			}
+		}
+		else if (ip_address.ip_p == IPPROTO_TCP)
+		{
+			count_tcp++;
+
+			struct tcphdr tcp_header;
+			memcpy(&tcp_header, &buff1[offset], sizeof(tcp_header));
+			offset += sizeof(tcp_header);
+
+			addPortaTcp(tcp_header.th_sport);
+			addPortaTcp(tcp_header.th_dport);
+
+			if (htons(tcp_header.th_dport) == 0x50 || htons(tcp_header.th_sport) == 0x50)
+			{
+				count_http++;
+			}
+			else if (htons(tcp_header.th_dport) == 0x35 || htons(tcp_header.th_sport) == 0x35)
+			{
+				count_dns++;
+			}
+			else if (htons(tcp_header.th_dport) == 0x1bb || htons(tcp_header.th_sport) == 0x1bb)
+			{
+				count_https++;
+			}
+		}
 	}
 }
 
