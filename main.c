@@ -300,7 +300,7 @@ void countpacket(struct ether_header header)
 			}
 			else if (htons(tcp_header.th_dport) == 0x1bb || htons(tcp_header.th_sport) == 0x1bb)
 			{
-				addIp(ip_address.ip_dst);
+				//addIp(ip_address.ip_dst);
 				count_https++;
 			}
 			else if (htons(tcp_header.th_dport) == 0x17 || htons(tcp_header.th_sport) == 0x17)
