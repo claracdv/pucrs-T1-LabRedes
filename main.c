@@ -154,7 +154,7 @@ void countpacket(struct ether_header header)
 
 			addPortaUdp(udp_header.uh_sport);
 			addPortaUdp(udp_header.uh_dport);
-			// printf("adding %x %x",udp_header.uh_sport,udp_header.uh_dport);
+
 			if (htons(udp_header.uh_dport) == 0x35 || htons(udp_header.uh_sport) == 0x35)
 			{
 				count_dns++;
@@ -236,7 +236,7 @@ void countpacket(struct ether_header header)
 
 			addPortaUdp(udp_header.uh_sport);
 			addPortaUdp(udp_header.uh_dport);
-			// printf("adding %x %x",udp_header.uh_sport,udp_header.uh_dport);
+
 			if (htons(udp_header.uh_dport) == 0x35 || htons(udp_header.uh_sport) == 0x35)
 			{
 				count_dns++;
